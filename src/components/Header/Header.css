@@ -1,0 +1,45 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 32px 0 28px;
+}
+.header__add-clothes-btn {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  border: none;
+  cursor: pointer;
+}
+
+.header__user-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header__logo {
+  max-width: 89px;
+  height: 40px;
+}
+
+.header__date-and-location {
+  margin: 0;
+  margin-top: 11px;
+  margin-left: 24px;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.header__username {
+  margin: 0;
+  margin-left: 20px;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 100%;
+}
+
+.header__user-avatar:hover {
+  background-image: url("../../assets/avatar-hover.png") center no-repeat;
+  cursor: pointer;
+}
