@@ -1,0 +1,7 @@
+.profile {
+  display: flex;
+  /* flex-wrap: wrap; */
+  flex-direction: row;
+  gap: 116px;
+  box-sizing: border-box;
+}

@@ -1,4 +1,4 @@
-.modal__content_type_image {
+.modal__content.modal__content_type_image {
   border-radius: 16px;
   height: 610px;
   padding: 0;
@@ -12,11 +12,26 @@
   object-fit: cover;
   display: block;
 }
+.modal__footer {
+  display: flex;
+  justify-content: space-between;
+}
 .modal__caption {
   margin-left: 32px;
   margin-top: 20px;
   margin-bottom: 12px;
 }
+.modal__description {
+  display: flex;
+  flex-direction: column;
+}
 .modal__weather {
   margin: 0 0 0 32px;
+}
+.modal__delete {
+  border: none;
+  margin: 0 20px 0 0;
+  background-color: #fff;
+  padding: 0;
+  color: #ff4d00;
 }

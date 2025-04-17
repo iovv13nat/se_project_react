@@ -1,27 +1,42 @@
 import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 
 import "./App.css";
 import Header from "../Header/Header.jsx";
 import Main from "../Main/Main.jsx";
-import ModalWithForm from "../ModalWithForm/ModalWithForm.jsx";
+//import { defaultClothingItems } from "../../utils/constants.js";
 import Footer from "../Footer/Footer.jsx";
 import ItemModal from "../ItemModal/ItemModal.jsx";
 import { coordinates, APIkey } from "../../utils/constants.js";
 import { getWeather, filterWeatherData } from "../../utils/weatherApi.js";
+import CurrentTemperatureUnitContext from "../../contexts/CurrentTemperatureUnitContext.js";
+import Profile from "../Profile/Profile.jsx";
+import AddItemModal from "../AddItemModal/AddItemModal.jsx";
+import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal.jsx";
+import { addItem, getItems, deleteItem } from "../../utils/api.js";
 
 function App() {
   const [weatherData, setWeatherData] = useState({
-    type: " ",
-    temp: { F: 999 },
+    type: "",
+    temp: { F: 999, C: 999 },
     city: "",
+    condition: "",
+    isDay: true,
   });
   const [activeModal, setActiveModal] = useState("");
   const [selectedCard, setSelectedCard] = useState({});
-  // const [mobileMenuOpened, setMobileMebuOpened] = useState(false);
+  const [currentTemperatureUnit, setCurrentTemperatureUnit] = useState("F");
+  const [clothingItems, setClothingItems] = useState([]);
+  const [cardToDelete, setCardToDelete] = useState(null);
+  const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
 
   // const handleMobileMenuOpened = () => {
   //   setMobileMebuOpened = true;
   // };
+
+  const handleToggleSwitchChange = () => {
+    setCurrentTemperatureUnit(currentTemperatureUnit === "F" ? "C" : "F");
+  };
 
   const handleAddClick = () => {
     setActiveModal("add-garment");
@@ -35,6 +50,62 @@ function App() {
     setActiveModal("preview");
     setSelectedCard(card);
   };
+  const handleAddItemModalSubmit = ({ name, imageUrl, weather }) => {
+    addItem({ name, imageUrl, weather })
+      .then((newItem) => {
+        setClothingItems((prevItems) => [newItem, ...prevItems]);
+        closeActiveModal();
+      })
+      .catch((err) => {
+        console.error("Error adding item:", err);
+      });
+  };
+
+  // const newItem = {
+  //   _id: Date.now().toString(), //  Unique ID
+  //   name,
+  //   link: imageUrl,
+  //   weather,
+  // };
+
+  // console.log("Before adding - Current items:", clothingItems);
+  // console.log("New item data:", { name, imageUrl, weather });
+  // setClothingItems([{ name, link: imageUrl, weather }, ...clothingItems]);
+  // console.log("After adding - Updated items:", [
+  //   { name, link: imageUrl, weather },
+  //   ...clothingItems,
+  // ]);
+
+  const handleDeleteItem = () => {
+    const idToDelete = cardToDelete?._id;
+
+    deleteItem(idToDelete)
+      .then(() => {
+        setClothingItems((prevItems) =>
+          prevItems.filter((item) => item._id !== cardToDelete._id)
+        );
+        setCardToDelete(null);
+        setIsDeleteModalOpened(false);
+        setActiveModal("");
+        closeActiveModal();
+      })
+      .catch((error) => {
+        console.error("Something went wrong:", error);
+      });
+    // setClothingItems((prevItems) =>
+    //   prevItems.filter((item) => item._id !== cardToDelete._id)
+    // );
+    // setCardToDelete(null);
+    // setIsDeleteModalOpened(false);
+    // setActiveModal("");
+    // closeActiveModal();
+  };
+  const openConfirmationModal = (card) => {
+    console.log("Opening confirmation modal for:", card);
+    setCardToDelete(card);
+    setActiveModal("");
+    setIsDeleteModalOpened(true);
+  };
 
   useEffect(() => {
     getWeather(coordinates, APIkey)
@@ -44,65 +115,74 @@ function App() {
       })
       .catch(console.error);
   }, []);
-  return (
-    <div className="app">
-      <div className="app__content">
-        <Header
-          handleAddClick={handleAddClick}
-          weatherData={weatherData}
-          // handleMobileMenuOpened={handleMobileMenuOpened}
-        />
-        <Main weatherData={weatherData} handleCardClick={handleCardClick} />
-        <Footer author="Developed by Natalia Keegan" year="2025" />
-      </div>
-      <ModalWithForm
-        title="New garment"
-        buttonText="Add garment"
-        activeModal={activeModal}
-        onClose={closeActiveModal}
-        isOpen={activeModal === "add-garment"}
-      >
-        <label htmlFor="name" className="modal__label">
-          Name{" "}
-          <input
-            type="text"
-            className="modal__input"
-            id="name"
-            placeholder="Name"
-          />
-        </label>
-        <label htmlFor="imageUrl" className="modal__label">
-          Image{" "}
-          <input
-            type="url"
-            className="modal__input"
-            id="imageUrl"
-            placeholder="Image URL"
-          />
-        </label>
-        <fieldset className="modal__radio-btns">
-          <legend className="modal__legend">Select the weather type:</legend>
-          <label htmlFor="hot" className="modal__radio-label">
-            <input type="radio" className="modal__radio-input" id="hot" />
-            Hot
-          </label>
 
-          <label htmlFor="warm" className="modal__radio-label">
-            <input type="radio" className="modal__radio-input" id="warm" />
-            Warm
-          </label>
-          <label htmlFor="cold" className="modal__radio-label">
-            <input type="radio" className="modal__radio-input" id="cold" />
-            Cold
-          </label>
-        </fieldset>
-      </ModalWithForm>
-      <ItemModal
-        activeModal={activeModal}
-        card={selectedCard}
-        onClose={closeActiveModal}
-      />
-    </div>
+  useEffect(() => {
+    getItems()
+      .then((data) => {
+        console.log(data);
+        setClothingItems(data);
+      })
+      .catch(console.error);
+  }, []);
+
+  return (
+    <CurrentTemperatureUnitContext.Provider
+      value={{ currentTemperatureUnit, handleToggleSwitchChange }}
+    >
+      <div className="app">
+        <div className="app__content">
+          <Header
+            handleAddClick={handleAddClick}
+            weatherData={weatherData}
+            onClose={closeActiveModal}
+            // handleMobileMenuOpened={handleMobileMenuOpened}
+          />
+
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Main
+                  weatherData={weatherData}
+                  handleCardClick={handleCardClick}
+                  clothingItems={clothingItems}
+                />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <Profile
+                  handleCardClick={handleCardClick}
+                  clothingItems={clothingItems}
+                  handleAddClick={handleAddClick}
+                />
+              }
+            />
+          </Routes>
+
+          <Footer author="Developed by Natalia Keegan" year="2025" />
+        </div>
+        <AddItemModal
+          onClose={closeActiveModal}
+          isOpen={activeModal === "add-garment"}
+          activeModal={activeModal}
+          onAddItemModalSubmit={handleAddItemModalSubmit}
+        />
+        <ItemModal
+          activeModal={activeModal}
+          card={selectedCard}
+          onClose={closeActiveModal}
+          // onDeleteItem={handleDeleteItem}
+          onOpenConfirmModal={openConfirmationModal}
+        />
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpened}
+          onClose={() => setIsDeleteModalOpened(false)}
+          onConfirmation={handleDeleteItem}
+        />
+      </div>
+    </CurrentTemperatureUnitContext.Provider>
   );
 }
 

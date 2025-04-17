@@ -1,6 +1,7 @@
 .cards__list {
   display: flex;
   flex-wrap: wrap;
+  /* justify-content: center; */
   list-style-type: none;
   padding: 0;
   gap: 20px;
@@ -12,4 +13,10 @@
   font-size: 20px;
   line-height: 100%;
   margin: 0 0 34px;
+}
+@media screen and (max-width: 768px) {
+  .card__list {
+    display: flex;
+    justify-content: center;
+  }
 }

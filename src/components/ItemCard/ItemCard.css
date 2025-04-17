@@ -1,5 +1,6 @@
 .card {
-  width: 323px;
+  flex: 0 1 calc(33.333% - 13.33px); /* Three cards per row with gap */
+  box-sizing: border-box;
   position: relative;
   display: flex;
   justify-content: center;

@@ -1,31 +1,53 @@
 import WeatherCard from "../WeatherCard/WeatherCard.jsx";
 import ItemCard from "../ItemCard/ItemCard.jsx";
-import { defaultClothingItems } from "../../utils/constants.js";
+//import { defaultClothingItems } from "../../utils/constants.js";
 import "./Main.css";
+import { useContext } from "react";
+import CurrentTemperatureUnitContext from "../../contexts/CurrentTemperatureUnitContext.js";
 
-function Main({ weatherData, handleCardClick }) {
+function Main({ weatherData, handleCardClick, clothingItems }) {
+  const filteredItems = weatherData.type
+    ? clothingItems.filter(
+        (item) => item.weather?.toLowerCase() === weatherData.type.toLowerCase()
+      )
+    : clothingItems;
+
+  // console.log("Main component - Received clothingItems:", clothingItems);
+  const { currentTemperatureUnit } = useContext(CurrentTemperatureUnitContext);
   return (
     <main>
       <WeatherCard weatherData={weatherData} />
       <section className="cards">
         <p className="cards__text">
-          Today is {weatherData.temp.F} &deg; F/ You may want to wear:
+          Today is {weatherData.temp[currentTemperatureUnit]} &deg;
+          {currentTemperatureUnit} / You may want to wear:
         </p>
-        <ul className="cards__list">
-          {defaultClothingItems
+        {filteredItems.length > 0 ? (
+          <ul className="cards__list">
+            {filteredItems /* {clothingItems
             .filter((item) => {
-              return item.weather === weatherData.type;
-            })
-            .map((item) => {
+              // console.log("Item weather:", item.weather);
+              // console.log("Current weather type:", weatherData.type);
               return (
-                <ItemCard
-                  key={item._id}
-                  item={item}
-                  onCardClick={handleCardClick}
-                />
+                item.weather?.toLowerCase() === weatherData.type.toLowerCase()
               );
-            })}
-        </ul>
+            }) */
+
+              .map((item) => {
+                return (
+                  <ItemCard
+                    key={item._id}
+                    item={item}
+                    onCardClick={handleCardClick}
+                  />
+                );
+              })}
+          </ul>
+        ) : (
+          <p className="cards__fallback">
+            No clothing matches the current weather.
+          </p>
+        )}
       </section>
     </main>
   );

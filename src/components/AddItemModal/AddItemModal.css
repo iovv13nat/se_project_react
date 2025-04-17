@@ -1,0 +1,10 @@
+.modal__error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.modal__input_invalid {
+  border: 1px solid red;
+}

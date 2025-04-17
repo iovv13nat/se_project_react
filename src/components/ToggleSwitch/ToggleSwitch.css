@@ -1,0 +1,95 @@
+.toggle-switch__checkbox {
+  opacity: 0;
+}
+
+.toggle-switch {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 56px;
+  height: 28px;
+  background: #ffff;
+  border: 2px solid #7e7e7e;
+  border-radius: 100px;
+  position: relative;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.toggle-switch__slider {
+  color: #ffff;
+  text-align: center;
+  align-content: center;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  transition: all 0.2s;
+  vertical-align: middle;
+  position: absolute;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #000;
+}
+
+.toggle-switch__text {
+  position: absolute;
+  color: gray;
+  top: 7px;
+}
+
+.toggle-switch__text_F {
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+
+  vertical-align: middle;
+  left: 10px;
+}
+
+.toggle-switch__text_C {
+  right: 10px;
+
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+.toggle-switch__checkbox:checked ~ .toggle-switch__slider {
+  /* left: 28px; since container is 56px and slider is 28px */
+  /* transform: translateX(-100%); */
+  left: 28px;
+}
+.toggle-switch__text_color_white {
+  color: white;
+}
+.toggle-switch__text_color_gray {
+  color: gray;
+}
+
+.toggle-switch:hover {
+  border: 2px solid black;
+}
+/* .toggle-switch:active .toggle-switch__slider {
+  transform: translateX(-100%);
+  
+} */
+
+.toggle-switch__slider:hover {
+  left: 2px;
+}
+
+@media screen and (max-width: 768px) {
+  .toggle-switch {
+    display: none;
+  }
+}

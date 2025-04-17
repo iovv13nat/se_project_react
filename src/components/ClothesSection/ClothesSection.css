@@ -1,0 +1,31 @@
+.clothes-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  padding: 0 16px; /* optional for spacing on small screens */
+}
+
+.clothes-section__bar {
+  display: flex;
+
+  gap: 20px;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  margin-bottom: 16px;
+  margin-top: 35px;
+}
+.clothes-section__title {
+  margin: 0;
+}
+.clothes-section__btn {
+  border: none;
+  opacity: 60%;
+}
+.cards__list {
+  margin-top: 16px;
+  max-width: 1015px;
+}

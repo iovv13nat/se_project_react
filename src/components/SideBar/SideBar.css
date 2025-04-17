@@ -1,0 +1,27 @@
+.sidebar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 229px;
+  margin-top: 19px;
+  /* margin-right: 116px; */
+}
+.sidebar__avatar {
+  width: 56p;
+  height: 56px;
+}
+.sidebar__username {
+  margin: 0;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+}

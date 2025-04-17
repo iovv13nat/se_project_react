@@ -1,0 +1,84 @@
+/* When modal is open */
+.modal_opened {
+  display: flex;
+}
+
+.modal__content.modal__content_type_confirm {
+  display: flex;
+  max-width: 670px;
+  height: 280px;
+  flex-direction: column;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.modal__close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent url(../../assets/close-btn.png) center no-repeat;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.modal__text {
+  font-size: 18px;
+  margin: 0;
+  margin-bottom: 40px;
+  color: #333;
+  text-align: center;
+  max-width: 367px;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0%;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+/* Action buttons container */
+.modal__actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0%;
+}
+
+/* Cancel button */
+.modal__button_cancel {
+  background-color: #fff;
+  color: #000;
+  border: none;
+  font-weight: 700;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  flex: 1;
+  padding: 0;
+}
+
+/* Confirm (Delete) button */
+.modal__button_confirm {
+  color: #d9534f;
+  background-color: #fff;
+  border: none;
+  padding: 0;
+  font-size: 16px;
+  cursor: pointer;
+  flex: 1;
+  font-weight: 700;
+}
+
+.modal__button_cancel:hover,
+.modal__button_confirm:hover {
+  opacity: 0.9;
+}
