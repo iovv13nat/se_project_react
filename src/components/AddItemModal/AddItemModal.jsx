@@ -1,92 +1,60 @@
 import "./AddItemModal.css";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import { useState, useEffect } from "react";
+import { useFormAndValidation } from "../../hooks/useFormAndValidation";
+function AddItemModal({
+  onClose,
+  isOpen,
+  activeModal,
+  onAddItemModalSubmit,
+  isLoading,
+}) {
+  const { values, handleChange, errors, isValid, resetForm, setValues } =
+    useFormAndValidation();
 
-function AddItemModal({ onClose, isOpen, activeModal, onAddItemModalSubmit }) {
-  const [name, setName] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [weather, setWeather] = useState("");
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [nameError, setNameError] = useState("");
-  const [imageUrlError, setImageUrlError] = useState("");
-  const handleNameChange = (e) => {
-    const value = e.target.value;
-    setName(value);
-    if (value.trim().length < 2) {
-      setNameError("Name must be at least 2 characters.");
-    } else {
-      setNameError("");
-    }
-  };
-  const handleImageChange = (e) => {
-    const value = e.target.value;
-    setImageUrl(value);
-    const urlTipe = /^https?:\/\/\S+\.\S+/;
-    if (!urlTipe.test(value)) {
-      setImageUrlError("Please enter a valid image URL");
-    } else {
-      setImageUrlError("");
-    }
-  };
-
-  const handleWeatherChange = (e) => {
-    setWeather(e.target.value);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!isValid) return;
+    onAddItemModalSubmit({
+      name: values.name,
+      imageUrl: values.link,
+      weather: values.weatherType,
+    });
   };
 
   useEffect(() => {
     if (!isOpen) {
-      setName("");
-      setImageUrl("");
-      setWeather("");
-      setNameError("");
-      setImageUrlError("");
-      setIsFormValid(false);
+      resetForm();
     }
-  }, [isOpen]);
+  }, [isOpen, resetForm]);
 
-  useEffect(() => {
-    const isValid =
-      name.trim().length >= 2 &&
-      imageUrl.trim().startsWith("http") &&
-      !nameError &&
-      !imageUrlError &&
-      weather;
-    setIsFormValid(isValid);
-  }, [name, imageUrl, weather, nameError, imageUrlError]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-    onAddItemModalSubmit({ name, imageUrl, weather });
-    // setName("");
-    // setImageUrl("");
-    // setWeather("");
-  };
   return (
     <ModalWithForm
       title="New garment"
-      buttonText="Add garment"
+      buttonText={isLoading ? "Saving..." : "Add garment"}
       activeModal={activeModal}
       onClose={onClose}
       isOpen={isOpen}
       onSubmit={handleSubmit}
-      isSubmitDisabled={!isFormValid}
+      isSubmitDisabled={!isValid}
     >
       <label htmlFor="name" className="modal__label">
         Name{" "}
         <input
           type="text"
           name="name"
-          className={`modal__input ${nameError ? "modal__input_invalid" : ""}`}
+          className={`modal__input ${
+            errors.name ? "modal__input_invalid" : ""
+          }`}
           id="name"
           placeholder="Name"
           required
           minLength="2"
           maxLength="30"
-          onChange={handleNameChange}
-          value={name}
+          onChange={handleChange}
+          value={values.name || ""}
         />
-        {nameError && <span className="modal__error">{nameError}</span>}
+        {errors.name && <span className="modal__error">{errors.name}</span>}
       </label>
       <label htmlFor="imageUrl" className="modal__label">
         Image{" "}
@@ -94,26 +62,40 @@ function AddItemModal({ onClose, isOpen, activeModal, onAddItemModalSubmit }) {
           type="url"
           name="link"
           className={`modal__input ${
-            imageUrlError ? "modal__input_invalid" : ""
+            errors.link ? "modal__input_invalid" : ""
           }`}
           id="imageUrl"
           placeholder="Image URL"
           required
-          onChange={handleImageChange}
-          value={imageUrl}
+          onChange={handleChange}
+          value={values.link || ""}
         />
-        {imageUrlError && <span className="modal__error">{imageUrlError}</span>}
+        {errors.link && <span className="modal__error">{errors.link}</span>}
       </label>
       <fieldset className="modal__radio-btns">
         <legend className="modal__legend">Select the weather type:</legend>
-        <label htmlFor="hot" className="modal__radio-label">
+        {["hot", "warm", "cold"].map((type) => (
+          <label key={type} htmlFor={type} className="modal__radio-label">
+            <input
+              type="radio"
+              className="modal__radio-input"
+              id={type}
+              name="weatherType"
+              value={type}
+              onChange={handleChange}
+              checked={values.weatherType === type}
+            />
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </label>
+        ))}
+        {/* <label htmlFor="hot" className="modal__radio-label">
           <input
             type="radio"
             className="modal__radio-input"
             id="hot"
             name="weatherType"
             value="hot"
-            onChange={handleWeatherChange}
+            onChange={handleChange}
             checked={weather === "hot"}
           />
           Hot
@@ -142,7 +124,7 @@ function AddItemModal({ onClose, isOpen, activeModal, onAddItemModalSubmit }) {
             checked={weather === "cold"}
           />
           Cold
-        </label>
+        </label> */}
       </fieldset>
     </ModalWithForm>
   );

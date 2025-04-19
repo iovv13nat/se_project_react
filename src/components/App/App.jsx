@@ -15,6 +15,16 @@ import AddItemModal from "../AddItemModal/AddItemModal.jsx";
 import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal.jsx";
 import { addItem, getItems, deleteItem } from "../../utils/api.js";
 
+export const checkResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Error: ${res.status}`);
+};
+
+export const request = (url, options) => {
+  return fetch(url, options).then(checkResponse);
+};
 function App() {
   const [weatherData, setWeatherData] = useState({
     type: "",
@@ -29,6 +39,7 @@ function App() {
   const [clothingItems, setClothingItems] = useState([]);
   const [cardToDelete, setCardToDelete] = useState(null);
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const handleMobileMenuOpened = () => {
   //   setMobileMebuOpened = true;
@@ -42,8 +53,14 @@ function App() {
     setActiveModal("add-garment");
   };
 
-  const closeActiveModal = () => {
+  // const closeActiveModal = () => {
+  //   setActiveModal("");
+  // };
+  const closeAllModals = () => {
     setActiveModal("");
+    setIsDeleteModalOpened(false);
+    setSelectedCard({});
+    setCardToDelete(null);
   };
 
   const handleCardClick = (card) => {
@@ -51,13 +68,17 @@ function App() {
     setSelectedCard(card);
   };
   const handleAddItemModalSubmit = ({ name, imageUrl, weather }) => {
+    setIsLoading(true);
     addItem({ name, imageUrl, weather })
       .then((newItem) => {
         setClothingItems((prevItems) => [newItem, ...prevItems]);
-        closeActiveModal();
+        closeAllModals();
       })
       .catch((err) => {
         console.error("Error adding item:", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -86,8 +107,8 @@ function App() {
         );
         setCardToDelete(null);
         setIsDeleteModalOpened(false);
-        setActiveModal("");
-        closeActiveModal();
+
+        closeAllModals();
       })
       .catch((error) => {
         console.error("Something went wrong:", error);
@@ -103,9 +124,22 @@ function App() {
   const openConfirmationModal = (card) => {
     console.log("Opening confirmation modal for:", card);
     setCardToDelete(card);
-    setActiveModal("");
+    // setActiveModal("");
     setIsDeleteModalOpened(true);
   };
+
+  useEffect(() => {
+    if (!activeModal && !isDeleteModalOpened) return;
+
+    const handleEscClose = (e) => {
+      if (e.key === "Escape") {
+        closeAllModals();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscClose);
+    return () => document.removeEventListener("keydown", handleEscClose);
+  }, [activeModal, isDeleteModalOpened]);
 
   useEffect(() => {
     getWeather(coordinates, APIkey)
@@ -134,7 +168,7 @@ function App() {
           <Header
             handleAddClick={handleAddClick}
             weatherData={weatherData}
-            onClose={closeActiveModal}
+            onClose={closeAllModals}
             // handleMobileMenuOpened={handleMobileMenuOpened}
           />
 
@@ -164,22 +198,26 @@ function App() {
           <Footer author="Developed by Natalia Keegan" year="2025" />
         </div>
         <AddItemModal
-          onClose={closeActiveModal}
+          onClose={closeAllModals}
           isOpen={activeModal === "add-garment"}
           activeModal={activeModal}
           onAddItemModalSubmit={handleAddItemModalSubmit}
+          isLoading={isLoading}
         />
         <ItemModal
           activeModal={activeModal}
           card={selectedCard}
-          onClose={closeActiveModal}
+          onClose={closeAllModals}
           // onDeleteItem={handleDeleteItem}
           onOpenConfirmModal={openConfirmationModal}
+          isLoading={isLoading}
         />
         <DeleteConfirmationModal
           isOpen={isDeleteModalOpened}
-          onClose={() => setIsDeleteModalOpened(false)}
+          // onClose={() => setIsDeleteModalOpened(false)}
+          onClose={closeAllModals}
           onConfirmation={handleDeleteItem}
+          isLoading={isLoading}
         />
       </div>
     </CurrentTemperatureUnitContext.Provider>
